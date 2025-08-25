@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  displayName    String        @map("display_name")
+  username       String?       @unique
+  hashedPassword String?       @map("hashed_password")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  setUsername    Boolean       @default(true)
+  commentLikes   CommentLike[]
+  comments       Comment[]
+  following      Follow[]      @relation("UserFollowing")
+  followers      Follow[]      @relation("UserFollowers")
+  sentMessages   Message[]     @relation("sentMessages")
+  userA          Chat[]        @relation("userA")
+  userB          Chat[]        @relation("userB")
+  posts          Post[]
+  postLikes      PostLike[]
+  profile        Profile?
+  setting        UserSetting?
+
+  @@map("user")
+}
+
+model Chat {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  userA         User      @relation("userA", fields: [userAId], references: [id], onDelete: Cascade)
+  userAId       String    @db.ObjectId
+  userB         User      @relation("userB", fields: [userBId], references: [id], onDelete: Cascade)
+  userBId       String    @db.ObjectId
+  message       Message[]
+  lastMessageAt DateTime  @default(now())
+  lastMessage   String    @default("")
+
+  @@unique([userAId, userBId])
+  @@map("chat")
+}
+
+model Profile {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  bio            String   @default("")
+  profilePicture String?
+  pfp_public_id  String?
+  website        String?
+  github         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  userId         String   @unique @db.ObjectId
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profile")
+}
+
+model UserSetting {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  isDarkMode Boolean @default(true)
+  userId     String  @unique @db.ObjectId
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_setting")
+}
+
+model Post {
+  id         String          @id @default(auto()) @map("_id") @db.ObjectId
+  body       String         @default("")
+  gitLink    String?
+  repoLink   String?
+  attachment String?
+  public_id  String?
+  createdAt  DateTime       @default(now())
+  nextPostId String?        @db.ObjectId
+  userId     String         @db.ObjectId
+  comments   Comment[]
+  nextPost   Post?          @relation("PostSequal", fields: [nextPostId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  prevPost   Post[]         @relation("PostSequal")
+  author     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes      PostLike[]
+  tagIDs     String[]       @db.ObjectId
+  tags       Tag[]          @relation(fields: [tagIDs], references: [id])
+
+  @@map("post")
+}
+
+model Comment {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  body            String
+  createdAt       DateTime      @default(now())
+  userId          String        @db.ObjectId
+  parentCommentId String?       @db.ObjectId
+  postId          String        @db.ObjectId
+  likes           CommentLike[]
+  parentComment   Comment?      @relation("CommentParent", fields: [parentCommentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  childComment    Comment[]     @relation("CommentParent")
+  post            Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model PostLike {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  postId String @db.ObjectId
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@map("post_likes")
+}
+
+model CommentLike {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String  @db.ObjectId
+  commentId String  @db.ObjectId
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+  @@map("comment_likes")
+}
+
+model Tag {
+  id    String   @id @default(auto()) @map("_id") @db.ObjectId
+  name  String   @unique
+  postIDs String[] @db.ObjectId
+  posts Post[]   @relation(fields: [postIDs], references: [id])
+
+  @@map("tag")
+}
+
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+  senderId  String   @db.ObjectId
+  sender    User     @relation("sentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  chatId    String   @db.ObjectId
+  chat      Chat     @relation(fields: [chatId], references: [id])
+
+  @@map("message")
+}
+
+model Follow {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  followingId String   @db.ObjectId
+  followerId  String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  follower    User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follow")
+}
