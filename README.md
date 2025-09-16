@@ -1,4 +1,4 @@
-# Social Media Application
+<img width="950" height="484" alt="image" src="https://github.com/user-attachments/assets/bad080df-d3e2-421f-8869-5e5ee1309b77" /><img width="920" height="492" alt="image" src="https://github.com/user-attachments/assets/b7dadaa3-d2e0-43d3-a456-034e8dd0b0e4" /># Social Media Application
 
 This project is a social media application that allows users to create profiles, post content, follow other users, chat with other users and like posts. It is structured into a backend API and a frontend client.
 
@@ -23,6 +23,32 @@ SocialMediaApp
 - **User Profiles**: Users can create and update their profiles.
 - **Posts**: Users can create, like, and comment on posts.
 - **Following**: Users can follow and unfollow other users.
+
+## Screenshots
+
+### Home Page
+![Home Page](demo/Home.png)
+
+### Sign-Up Page
+![Sign Up](demo/Signup.png)
+
+### Login Page
+![Login](demo/Login.png)
+
+### Chat
+![Chat](demo/Chat.png)
+
+### Comment
+![Comment](demo/Comments.png)
+
+### Profile
+![Profile](demo/Profile.png)
+
+### Search Users
+![Search](demo/Search.png)
+
+### Create Post 
+![Post](demo/Post.png)
 
 ## Technologies Used
 
