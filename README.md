@@ -27,7 +27,7 @@ SocialMediaApp
 ## Technologies Used
 
 - **Backend**: Node.js, Express, MongoDB
-- **Frontend**: React, TypeScript
+- **Frontend**: React, JavaScript
 - **Database**: MongoDB for data storage
 
 ## Getting Started
