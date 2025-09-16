@@ -1,4 +1,4 @@
-<img width="950" height="484" alt="image" src="https://github.com/user-attachments/assets/bad080df-d3e2-421f-8869-5e5ee1309b77" /><img width="920" height="492" alt="image" src="https://github.com/user-attachments/assets/b7dadaa3-d2e0-43d3-a456-034e8dd0b0e4" /># Social Media Application
+# Social Media Application
 
 This project is a social media application that allows users to create profiles, post content, follow other users, chat with other users and like posts. It is structured into a backend API and a frontend client.
 
